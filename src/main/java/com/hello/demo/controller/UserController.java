@@ -30,8 +30,8 @@ public class UserController {
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.saveUser(user);
-        return ResponseEntity.ok(createdUser);
+        
+        return ResponseEntity.ok().body(userService.saveUser(user));
     }
 
     // 로그인
