@@ -1,9 +1,6 @@
 package com.hello.demo.controller;
 
 import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +16,7 @@ import com.hello.demo.dto.LoginRequest;
 import com.hello.demo.entity.User;
 import com.hello.demo.service.UserService;
 
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/users")
@@ -30,56 +28,39 @@ public class UserController {
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        
-        return ResponseEntity.ok().body(userService.saveUser(user));
+        return ResponseEntity.ok(userService.saveUser(user));
     }
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-        Optional<User> user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-        if (user.isPresent()) {
-            session.setAttribute("user", user.get()); // 세션에 사용자 정보 저장
-            return ResponseEntity.ok("로그인 성공");
-        } else {
-            return ResponseEntity.status(401).body("로그인 실패");
-        }
-
+        return userService.login(loginRequest.getUsername(), loginRequest.getPassword(), session);
     }
 
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
-        session.invalidate();  // 세션 무효화
-        return ResponseEntity.ok("로그아웃 성공");
+        return userService.logout(session);
     }
 
     // 모든 사용자 조회
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // 사용자 조회
+    // 특정 사용자 조회
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> 
-            ResponseEntity.notFound().build());
+        return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 사용자 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-
-        return ResponseEntity.ok().body("");
-    }
-    
 }

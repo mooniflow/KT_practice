@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.hello.demo.entity.User;
 import com.hello.demo.repository.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class UserService {
@@ -15,16 +18,26 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    // 사용자 등록
+    // 회원가입
     public User saveUser(User user) {
-
-        
         return userRepository.save(user);
     }
 
-    // 사용자 로그인 검증
-    public Optional<User> login(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, password);
+    // 로그인 검증 및 세션 저장
+    public ResponseEntity<String> login(String username, String password, HttpSession session) {
+        Optional<User> user = userRepository.findByUsernameAndPassword(username, password);
+        if (user.isPresent()) {
+            session.setAttribute("user", user.get()); // 세션에 사용자 정보 저장
+            return ResponseEntity.ok("로그인 성공");
+        } else {
+            return ResponseEntity.status(401).body("로그인 실패");
+        }
+    }
+
+    // 로그아웃 (세션 무효화)
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("로그아웃 성공");
     }
 
     // 모든 사용자 조회
