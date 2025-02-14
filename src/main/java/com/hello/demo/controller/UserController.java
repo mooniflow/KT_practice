@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,7 @@ import com.hello.demo.service.UserService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8082") // CORS 설정 추가
 @RequestMapping("/users")
 public class UserController {
 
@@ -33,7 +36,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
+    public ResponseEntity<Long> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
         return userService.login(loginRequest.getUsername(), loginRequest.getPassword(), session);
     }
 
@@ -62,5 +65,17 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 회원 정보 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @RequestBody User updatedUser) {
+        return userService.updateUser(id, updatedUser);
+    }
+
+    // 세션 확인
+    @GetMapping("/session")
+    public ResponseEntity<User> checkSession(HttpSession session) {
+        return userService.checkSession(session);
     }
 }

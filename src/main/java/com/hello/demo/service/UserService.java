@@ -24,13 +24,13 @@ public class UserService {
     }
 
     // 로그인 검증 및 세션 저장
-    public ResponseEntity<String> login(String username, String password, HttpSession session) {
+    public ResponseEntity<Long> login(String username, String password, HttpSession session) {
         Optional<User> user = userRepository.findByUsernameAndPassword(username, password);
         if (user.isPresent()) {
             session.setAttribute("user", user.get()); // 세션에 사용자 정보 저장
-            return ResponseEntity.ok("로그인 성공");
+            return ResponseEntity.ok(user.get().getId());
         } else {
-            return ResponseEntity.status(401).body("로그인 실패");
+            return ResponseEntity.status(401).build();
         }
     }
 
@@ -54,4 +54,30 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    // 사용자 정보 업데이트
+    public ResponseEntity<User> updateUser(Long id, User updatedUser) {
+        return userRepository.findById(id)
+            .map(user -> {
+                user.setUsername(updatedUser.getUsername());
+                user.setEmail(updatedUser.getEmail());
+                user.setPassword(updatedUser.getPassword());
+                user.setPhone(updatedUser.getPhone());
+                user.setAddress(updatedUser.getAddress());
+                user.setRole(updatedUser.getRole());
+                return ResponseEntity.ok(userRepository.save(user));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 세션 확인
+    public ResponseEntity<User> checkSession(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(401).build();
+        }
+    }
 }
+
