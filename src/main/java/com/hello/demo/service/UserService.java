@@ -79,5 +79,23 @@ public class UserService {
             return ResponseEntity.status(401).build();
         }
     }
+
+    public ResponseEntity<User> updateNickname(Long id, String newNickname) {
+        return userRepository.findById(id)
+            .map(user -> {
+                user.setUsername(newNickname);
+                return ResponseEntity.ok(userRepository.save(user));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    public ResponseEntity<User> changePassword(Long id, String newPassword) {
+        return userRepository.findById(id)
+            .map(user -> {
+                user.setPassword(newPassword); // 비밀번호 암호화 필요
+                return ResponseEntity.ok(userRepository.save(user));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
 

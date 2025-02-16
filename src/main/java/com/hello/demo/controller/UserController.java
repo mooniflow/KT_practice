@@ -78,4 +78,16 @@ public class UserController {
     public ResponseEntity<User> checkSession(HttpSession session) {
         return userService.checkSession(session);
     }
+
+    // 닉네임 수정
+    @PutMapping("/{id}/nickname")
+    public ResponseEntity<User> updateNickname(@PathVariable("id") Long id, @RequestBody String newNickname) {
+        return userService.updateNickname(id, newNickname);
+    }
+
+    // 비밀번호 변경
+    @PutMapping("/{id}/password")
+    public ResponseEntity<User> changePassword(@PathVariable("id") Long id, @RequestBody String newPassword) {
+        return userService.changePassword(id, newPassword);
+    }
 }
