@@ -21,7 +21,7 @@ import com.hello.demo.service.UserService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8082") // CORS 설정 추가
+@CrossOrigin(origins = "http://localhost:8082") // CORS 설정 수정
 @RequestMapping("/users")
 public class UserController {
 
