@@ -8,6 +8,11 @@ DROP TABLE IF EXISTS code_detail CASCADE;
 DROP TABLE IF EXISTS code_group CASCADE;
 DROP TABLE IF EXISTS product CASCADE;
 DROP TABLE IF EXISTS cart CASCADE;
+DROP TABLE IF EXISTS schedule CASCADE;
+DROP TABLE IF EXISTS booking CASCADE;
+DROP TABLE IF EXISTS pet_sitter CASCADE;
+DROP TABLE IF EXISTS petsitter_certifications CASCADE;
+DROP TABLE IF EXISTS petsitter_available_times CASCADE;
 
 -- 테이블 재생성
 CREATE TABLE users (
@@ -101,3 +106,87 @@ INSERT INTO cart (user_id, product_id, quantity, total_price)
 VALUES
     (1, 1, 2, 39.98),
     (2, 2, 1, 29.99);
+
+-- 펫시터 테이블 생성
+CREATE TABLE IF NOT EXISTS pet_sitter (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255),
+    experience VARCHAR(255),
+    services VARCHAR(255),
+    pet_size VARCHAR(20),
+    price INT,
+    is_active BOOLEAN DEFAULT true,
+    introduction TEXT,
+    phone VARCHAR(20),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- 펫시터 인증서 테이블 생성
+CREATE TABLE IF NOT EXISTS petsitter_certifications (
+    pet_sitter_id BIGINT,
+    certifications VARCHAR(255),
+    FOREIGN KEY (pet_sitter_id) REFERENCES pet_sitter(id)
+);
+
+-- 펫시터 가능 시간 테이블 생성
+CREATE TABLE IF NOT EXISTS petsitter_available_times (
+    id SERIAL PRIMARY KEY,
+    pet_sitter_id BIGINT,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    FOREIGN KEY (pet_sitter_id) REFERENCES pet_sitter(id)
+);
+
+-- 스케줄 테이블 생성
+CREATE TABLE IF NOT EXISTS schedule (
+    id SERIAL PRIMARY KEY,
+    sitter_id BIGINT NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    FOREIGN KEY (sitter_id) REFERENCES pet_sitter(id)
+);
+
+-- 예약 테이블 생성
+CREATE TABLE IF NOT EXISTS booking (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    pet_id BIGINT NOT NULL,
+    sitter_id BIGINT NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    service VARCHAR(255),
+    status VARCHAR(20),
+    location VARCHAR(255),
+    price INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (pet_id) REFERENCES pets(id),
+    FOREIGN KEY (sitter_id) REFERENCES pet_sitter(id)
+);
+
+-- 펫시터 예시 데이터
+INSERT INTO pet_sitter (user_id, name, location, experience, services, pet_size, price, is_active, introduction, phone)
+VALUES
+    (2, '김펫시터', '서울시 강남구', '3년', '산책,돌봄', 'MEDIUM', 30000, true, '안녕하세요. 반려동물을 사랑하는 펫시터입니다.', '010-1234-5678'),
+    (3, '이펫시터', '서울시 서초구', '2년', '산책,돌봄', 'SMALL', 25000, true, '안녕하세요. 반려동물을 사랑하는 펫시터입니다.', '010-1234-5678');
+
+-- 펫시터 인증서 예시 데이터
+INSERT INTO petsitter_certifications (pet_sitter_id, certifications)
+VALUES
+    (1, '반려동물관리사 자격증'),
+    (1, '반려동물행동교정사 자격증'),
+    (2, '반려동물관리사 자격증');
+
+-- 펫시터 가능 시간 예시 데이터
+INSERT INTO petsitter_available_times (pet_sitter_id, start_time, end_time)
+VALUES
+    (1, '2024-03-25 09:00:00', '2024-03-25 18:00:00'),
+    (1, '2024-03-26 09:00:00', '2024-03-26 18:00:00'),
+    (2, '2024-03-25 10:00:00', '2024-03-25 19:00:00');
+
+-- 예약 예시 데이터 추가
+INSERT INTO booking (user_id, pet_id, sitter_id, start_time, end_time, service, status, location, price)
+VALUES
+    (1, 1, 2, '2024-03-25 10:00:00', '2024-03-25 12:00:00', '산책', 'PENDING', '서울특별시 강남구 역삼동', 30000),
+    (2, 2, 2, '2024-03-26 14:00:00', '2024-03-26 16:00:00', '돌봄', 'APPROVED', '서울특별시 강남구 역삼동', 30000);

@@ -14,8 +14,11 @@ public class BookingDTO {
     private Long petId;
     private String petName;
     private Long sitterId;
+    private String sitterName;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String service;
     private String status;
+    private String location;
+    private int price;
 }

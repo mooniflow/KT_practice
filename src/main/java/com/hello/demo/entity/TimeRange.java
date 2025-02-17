@@ -8,33 +8,31 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "petsitter_available_times")
 @Getter
 @Setter
-public class Booking {
+public class TimeRange {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "pet_id", nullable = false)
-    private Pet pet;
-
-    @ManyToOne
-    @JoinColumn(name = "sitter_id", nullable = false)
-    private PetSitter petSitter;
-
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private String service;
-    private String status; // pending, confirmed, rejected
-    private int price;
-    private String location;
-}
+
+    @ManyToOne
+    @JoinColumn(name = "pet_sitter_id")
+    private PetSitter petSitter;
+
+    public void setPetSitter(PetSitter petSitter) {
+        this.petSitter = petSitter;
+    }
+
+    public PetSitter getPetSitter() {
+        return petSitter;
+    }
+} 

@@ -1,8 +1,8 @@
 package com.hello.demo.entity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,9 +36,8 @@ public class PetSitter {
     @CollectionTable(name = "petsitter_certifications")
     private List<String> certifications;
     
-    @ElementCollection
-    @CollectionTable(name = "petsitter_available_times")
-    private List<List<LocalDateTime>> availableTimes;
+    @OneToMany(mappedBy = "petSitter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TimeRange> availableTimes;
     
     private String experience;
     private String services;
@@ -47,4 +47,7 @@ public class PetSitter {
     
     private int price;
     private boolean isActive;
+    
+    private String phone;
+    private String introduction;
 }

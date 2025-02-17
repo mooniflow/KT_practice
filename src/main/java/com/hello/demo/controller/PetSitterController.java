@@ -42,10 +42,17 @@ public class PetSitterController {
         return ResponseEntity.ok(petSitterService.getActivePetSitters());
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<PetSitterDTO> getPetSitterByUserId(@PathVariable("userId") Long userId) {
+        return petSitterService.getPetSitterByUserId(userId)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
     // 펫시터 정보 수정
     @PutMapping("/{id}")
     public ResponseEntity<PetSitterDTO> updatePetSitter(
-            @PathVariable Long id,
+            @PathVariable(name = "id") Long id,
             @RequestBody PetSitterDTO petSitterDTO) {
         return petSitterService.updatePetSitter(id, petSitterDTO);
     }

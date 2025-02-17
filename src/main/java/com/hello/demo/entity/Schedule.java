@@ -14,18 +14,10 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Booking {
+public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "pet_id", nullable = false)
-    private Pet pet;
 
     @ManyToOne
     @JoinColumn(name = "sitter_id", nullable = false)
@@ -33,8 +25,4 @@ public class Booking {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private String service;
-    private String status; // pending, confirmed, rejected
-    private int price;
-    private String location;
 }

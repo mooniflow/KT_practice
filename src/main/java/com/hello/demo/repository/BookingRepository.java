@@ -9,4 +9,5 @@ import com.hello.demo.entity.Booking;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByPetSitterId(Long sitterId);
     List<Booking> findByPetSitterIdAndStatus(Long sitterId, String status);
+    List<Booking> findByUserIdAndStatus(Long userId, String status);
 }
