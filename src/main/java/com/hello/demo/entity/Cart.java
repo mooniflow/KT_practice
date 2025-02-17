@@ -12,30 +12,20 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Pet {
+public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long cartId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private String name;
-    private String type;
-    private int age;
-    private String photo;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
-    // 기본 생성자
-    public Pet() {}
-
-    // 매개변수가 있는 생성자
-    public Pet(User user, String name, String type, int age, String photo) {
-        this.user = user;
-        this.name = name;
-        this.type = type;
-        this.age = age;
-        this.photo = photo;
-    }
+    private int quantity;
+    private double totalPrice;
 }
