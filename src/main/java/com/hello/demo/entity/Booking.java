@@ -24,10 +24,6 @@ public class Booking {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "pet_id", nullable = false)
-    private Pet pet;
-
-    @ManyToOne
     @JoinColumn(name = "sitter_id", nullable = false)
     private PetSitter petSitter;
 
@@ -35,6 +31,7 @@ public class Booking {
     private LocalDateTime endTime;
     private String service;
     private String status; // pending, confirmed, rejected
-    private int price;
     private String location;
+    private int price;
+    private String paymentStatus = "UNPAID"; // UNPAID, PAID, FAILED
 }

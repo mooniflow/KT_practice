@@ -111,33 +111,35 @@ public class PetSitterService {
     public ResponseEntity<PetSitterDTO> updatePetSitter(Long id, PetSitterDTO dto) {
         return petSitterRepository.findById(id)
             .map(petSitter -> {
-                updatePetSitterFields(petSitter, dto);
+                petSitter.setName(dto.getName());
+                petSitter.setLocation(dto.getLocation());
+                petSitter.setCertifications(dto.getCertifications());
+                petSitter.setExperience(dto.getExperience());
+                petSitter.setServices(dto.getServices());
+                try {
+                    petSitter.setPetSize(PetSize.valueOf(dto.getPetSize().trim()));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid pet size value: " + dto.getPetSize());
+                }
+                petSitter.setPrice(dto.getPrice());
+                petSitter.setActive(dto.isActive());
+                petSitter.setPhone(dto.getPhone());
+                petSitter.setIntroduction(dto.getIntroduction());
+                
+                petSitter.getAvailableTimes().clear();
+                List<TimeRange> newTimes = dto.getAvailableTimes().stream()
+                    .map(timeDTO -> {
+                        TimeRange timeRange = new TimeRange();
+                        timeRange.setStartTime(timeDTO.getStartTime());
+                        timeRange.setEndTime(timeDTO.getEndTime());
+                        timeRange.setPetSitter(petSitter);
+                        return timeRange;
+                    })
+                    .collect(Collectors.toList());
+                petSitter.getAvailableTimes().addAll(newTimes);
+                
                 return ResponseEntity.ok(convertToDTO(petSitterRepository.save(petSitter)));
             })
             .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    private void updatePetSitterFields(PetSitter petSitter, PetSitterDTO dto) {
-        petSitter.setName(dto.getName());
-        petSitter.setPhone(dto.getPhone());
-        petSitter.setLocation(dto.getLocation());
-        petSitter.setCertifications(dto.getCertifications());
-        petSitter.setExperience(dto.getExperience());
-        petSitter.setServices(dto.getServices());
-        petSitter.setPetSize(PetSize.valueOf(dto.getPetSize()));
-        petSitter.setPrice(dto.getPrice());
-        petSitter.setActive(dto.isActive());
-        petSitter.setIntroduction(dto.getIntroduction());
-        
-        List<TimeRange> availableTimes = dto.getAvailableTimes().stream()
-            .map(timeRangeDTO -> {
-                TimeRange timeRange = new TimeRange();
-                timeRange.setStartTime(timeRangeDTO.getStartTime());
-                timeRange.setEndTime(timeRangeDTO.getEndTime());
-                timeRange.setPetSitter(petSitter);
-                return timeRange;
-            })
-            .collect(Collectors.toList());
-        petSitter.setAvailableTimes(availableTimes);
     }
 }

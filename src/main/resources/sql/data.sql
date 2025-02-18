@@ -46,7 +46,7 @@ CREATE TABLE pets (
 INSERT INTO pets (user_id, name, type, age, photo)
 VALUES
     (1, 'Buddy', 'Dog', 3, 'buddy.jpg'),
-    (2, 'Mittens', 'Cat', 2, 'mittens.jpg');
+    (3, 'Mittens', 'Cat', 2, 'mittens.jpg');
 
 CREATE TABLE code_group (
     group_id VARCHAR(50) PRIMARY KEY,
@@ -152,7 +152,6 @@ CREATE TABLE IF NOT EXISTS schedule (
 CREATE TABLE IF NOT EXISTS booking (
     id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    pet_id BIGINT NOT NULL,
     sitter_id BIGINT NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
@@ -160,16 +159,16 @@ CREATE TABLE IF NOT EXISTS booking (
     status VARCHAR(20),
     location VARCHAR(255),
     price INT,
+    payment_status VARCHAR(20) DEFAULT 'UNPAID',
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (pet_id) REFERENCES pets(id),
     FOREIGN KEY (sitter_id) REFERENCES pet_sitter(id)
 );
 
 -- 펫시터 예시 데이터
 INSERT INTO pet_sitter (user_id, name, location, experience, services, pet_size, price, is_active, introduction, phone)
 VALUES
-    (2, '김펫시터', '서울시 강남구', '3년', '산책,돌봄', 'MEDIUM', 30000, true, '안녕하세요. 반려동물을 사랑하는 펫시터입니다.', '010-1234-5678'),
-    (3, '이펫시터', '서울시 서초구', '2년', '산책,돌봄', 'SMALL', 25000, true, '안녕하세요. 반려동물을 사랑하는 펫시터입니다.', '010-1234-5678');
+    (2, '김펫시터', '서울시 강남구', '3년', '산책,돌봄', 'MEDIUM', 100, true, '안녕하세요. 반려동물을 사랑하는 펫시터입니다.', '010-1234-5678'),
+    (3, '이펫시터', '서울시 서초구', '2년', '산책,돌봄', 'SMALL', 100, true, '안녕하세요. 반려동물을 사랑하는 펫시터입니다.', '010-1234-5678');
 
 -- 펫시터 인증서 예시 데이터
 INSERT INTO petsitter_certifications (pet_sitter_id, certifications)
@@ -186,7 +185,7 @@ VALUES
     (2, '2024-03-25 10:00:00', '2024-03-25 19:00:00');
 
 -- 예약 예시 데이터 추가
-INSERT INTO booking (user_id, pet_id, sitter_id, start_time, end_time, service, status, location, price)
+INSERT INTO booking (user_id, sitter_id, start_time, end_time, service, status, location, price, payment_status)
 VALUES
-    (1, 1, 2, '2024-03-25 10:00:00', '2024-03-25 12:00:00', '산책', 'PENDING', '서울특별시 강남구 역삼동', 30000),
-    (2, 2, 2, '2024-03-26 14:00:00', '2024-03-26 16:00:00', '돌봄', 'APPROVED', '서울특별시 강남구 역삼동', 30000);
+    (1, 2, '2024-03-25 10:00:00', '2024-03-25 12:00:00', '산책', 'PENDING', '서울특별시 강남구 역삼동', 30000, 'UNPAID'),
+    (3, 2, '2024-03-26 14:00:00', '2024-03-26 16:00:00', '돌봄', 'APPROVED', '서울특별시 강남구 역삼동', 30000, 'UNPAID');

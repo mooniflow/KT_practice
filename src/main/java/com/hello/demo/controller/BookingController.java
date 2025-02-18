@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hello.demo.dto.BookingDTO;
+import com.hello.demo.dto.PaymentUpdateRequest;
 import com.hello.demo.service.BookingService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,6 +69,14 @@ public class BookingController {
         return bookingService.updateBookingStatus(id, "CANCELLED");
     }
 
+    @PutMapping("/{id}/payment")
+    @Operation(summary = "결제 상태 업데이트", description = "예약의 결제 상태를 업데이트합니다")
+    public ResponseEntity<BookingDTO> updatePaymentStatus(
+            @PathVariable("id") Long id,
+            @RequestBody PaymentUpdateRequest request) {
+        return bookingService.updatePaymentStatus(id, request);
+    }
+
     @PostMapping
     public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) {
         try {
@@ -76,5 +85,13 @@ public class BookingController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "사용자 예약 조회", description = "특정 사용자의 모든 예약을 조회합니다")
+    @Parameter(name = "userId", description = "사용자 ID", required = true)
+    public ResponseEntity<List<BookingDTO>> getUserBookings(
+            @PathVariable("userId") @Min(1) Long userId) {
+        return ResponseEntity.ok(bookingService.getBookingsByUserId(userId));
     }
 }
